@@ -29,8 +29,7 @@ public class ScorebordTeam {
 
 	// TODO: staticなんでいつか変更.
 	public enum TeamName {
-		Hunter("Hunter", "&C"), Runner("Runner", "&A"), RunnerPrisoner("RunnerPrisoner",
-				"&3"), OtherPlayer("OtherPlayer", "&F");
+		Hunter("Hunter", "&C"), Runner("Runner", "&A");
 
 		public String displayname, prefix;
 
@@ -52,13 +51,6 @@ public class ScorebordTeam {
 		Set<Player> players = new HashSet<>();
 		getTeam(name).getEntries().forEach(uuid -> players.add(Bukkit.getPlayer(UUID.fromString(uuid))));
 		players.removeIf(player -> player == null);
-		return players;
-	}
-
-	public Set<Player> getAllRunner() {
-		Set<Player> players = new HashSet<>();
-		players.addAll(getTeamPlayers(TeamName.Runner));
-		players.addAll(getTeamPlayers(TeamName.RunnerPrisoner));
 		return players;
 	}
 

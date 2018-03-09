@@ -22,7 +22,7 @@ public class GameFile extends YamlFile {
 	@YamlFileExceptField
 	public Map<String, TeamName> Players; // TODO
 	@YamlFileExceptField
-	public Location prison_loc;
+	public Location lobby_loc, spawn_loc, respawn_loc;
 	public HunterItems HunterItems;
 
 	public class HunterItems {
@@ -55,15 +55,12 @@ public class GameFile extends YamlFile {
 		SendLog.debug("loadField Method!");
 		GameLength = new Time(getFileConfiguration().getInt("GameLength"));
 
-		prison_loc = getLocation();
-
-		// Players = new HashMap<>();
-		// testFields();
-		// Playersがnull→Players.getClass().getName() x
+		lobby_loc = getLocation("Lobby.Location");
+		spawn_loc = getLocation("Spawn.Location");
+		respawn_loc = getLocation("Respawn.Location");
 	}
 
-	public Location getLocation() {
-		String path = "Prison.Location";
+	public Location getLocation(String path) {
 		String world_name = getFileConfiguration().getString(path + ".World");
 		World world = null;
 		if (world_name == null || (world = Bukkit.getServer().getWorld(world_name)) == null) {
@@ -99,15 +96,16 @@ public class GameFile extends YamlFile {
 
 	@Override
 	public void saveField() {
-		saveLocaton();
+		// TODO
+		// saveLocaton();
 	}
 
-	private void saveLocaton() {
-		if (prison_loc == null) return;
+	private void saveLocaton(Location loc) {
+		if (loc == null) return;
 		String path = "Prison.Location";
-		getFileConfiguration().set(path + ".World", prison_loc.getWorld().getName());
-		getFileConfiguration().set(path + ".X", prison_loc.getX());
-		getFileConfiguration().set(path + ".Y", prison_loc.getY());
-		getFileConfiguration().set(path + ".Z", prison_loc.getZ());
+		getFileConfiguration().set(path + ".World", loc.getWorld().getName());
+		getFileConfiguration().set(path + ".X", loc.getX());
+		getFileConfiguration().set(path + ".Y", loc.getY());
+		getFileConfiguration().set(path + ".Z", loc.getZ());
 	}
 }

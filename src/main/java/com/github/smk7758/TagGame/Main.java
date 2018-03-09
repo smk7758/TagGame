@@ -69,6 +69,7 @@ public class Main extends JavaPlugin {
 	public void saveResource(YamlFile file, boolean replace) {
 		if (replace || !file.getFile().exists()) saveResource(file.getFileName(), replace);
 	}
-	// TODO: tab complete, book or chat, recalling?reusing? the game - need?
+	// TODO: store inv, exp
+	// TODO: book or chat, recalling?reusing? the game - need?
 	// DONE: config
 }

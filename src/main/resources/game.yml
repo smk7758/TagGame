@@ -10,7 +10,7 @@ HunterItems:
     Name: test
     Lore:
       - lore test.
-Prison:
+Lobby:
   Location:
     World: world
     X: 0

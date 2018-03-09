@@ -50,7 +50,7 @@ public class TagGame implements Listener {
 
 		time_count = gamefile.GameLength.getAsSecond();
 		wait_time = gamefile.TeleportWaitTime;
-		sidebar = new Sidebar(main, time_count, team.getAllRunner().size(),
+		sidebar = new Sidebar(main, team.getTeamPlayers(TeamName.Runner).size(),
 				team.getTeamPlayers(TeamName.Hunter).size(), main.gamefile.GameName, main.gamefile.GameName);
 
 		List<? extends Player> online_players = (List<? extends Player>) Bukkit.getOnlinePlayers();
@@ -63,9 +63,14 @@ public class TagGame implements Listener {
 			online_players.forEach(player -> team.setTeam(TeamName.Runner, player));
 		}
 
-		switchIsGameStarting();
-		loop();
-		finish();
+		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.teleport(main.gamefile.spawn_loc));
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.teleport(main.gamefile.spawn_loc));
+			}
+		}.runTaskLater(main, wait_time * 20);
 
 		clearInventoryies(TeamName.Runner);
 		clearInventoryies(TeamName.Hunter);
@@ -78,6 +83,9 @@ public class TagGame implements Listener {
 		// send start!
 		team.sendTeamPlayers(TeamName.Hunter, main.languagefile.startToHunter);
 		team.sendTeamPlayers(TeamName.Runner, main.languagefile.startToRunner);
+		loop();
+		finish();
+		switchIsGameStarting();
 		return true;
 	}
 
@@ -91,9 +99,7 @@ public class TagGame implements Listener {
 					finishByCaught();
 				} else {
 					time_count -= 1;
-					sidebar.update(time_count,
-							team.getTeamPlayers(TeamName.Runner).size(),
-							team.getTeamPlayers(TeamName.RunnerPrisoner).size(),
+					sidebar.update(team.getTeamPlayers(TeamName.Runner).size(),
 							team.getTeamPlayers(TeamName.Hunter).size());
 					team.getTeamPlayers(TeamName.Hunter)
 							.forEach(player -> player.addPotionEffect(potion_effect));
@@ -116,7 +122,8 @@ public class TagGame implements Listener {
 				if (isGameStarting()) {
 					team.sendTeamPlayers(TeamName.Hunter, main.languagefile.finishByTimeToHunter);
 					team.sendTeamPlayers(TeamName.Runner, main.languagefile.finishByTimeToRunner);
-					team.sendTeamPlayers(TeamName.RunnerPrisoner, main.languagefile.finishByTimeToRunner);
+					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.teleport(main.gamefile.lobby_loc));
+					team.getTeamPlayers(TeamName.Runner).forEach(player -> player.teleport(main.gamefile.lobby_loc));
 					close();
 				}
 			}
@@ -128,7 +135,6 @@ public class TagGame implements Listener {
 		if (!isGameStarting()) return false;
 		team.sendTeamPlayers(TeamName.Hunter, main.languagefile.finishByCaughtToHunter);
 		team.sendTeamPlayers(TeamName.Runner, main.languagefile.finishByCaughtToRunner);
-		team.sendTeamPlayers(TeamName.RunnerPrisoner, main.languagefile.finishByCaughtToRunner);
 		close();
 		return true;
 	}
@@ -144,7 +150,6 @@ public class TagGame implements Listener {
 	private boolean close() {
 		if (!isGameStarting()) return false;
 		clearInventoryies(TeamName.Runner);
-		clearInventoryies(TeamName.RunnerPrisoner);
 		removeAllPotionEffects(TeamName.Hunter);
 
 		team.clearTeam();
@@ -180,9 +185,11 @@ public class TagGame implements Listener {
 		if (event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.HunterItems.Feather.Name)
 				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.HunterItems.Feather.Lore)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5, 0));
+			SendLog.debug("used feather", player);
 		} else if (event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.HunterItems.Bone.Name)
 				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.HunterItems.Bone.Lore)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5, 0));
+			SendLog.debug("used bone", player);
 			// TODO effect or bukkit invisible
 		}
 	}
@@ -197,11 +204,9 @@ public class TagGame implements Listener {
 				Utilities.convertText(main.languagefile.catchRunnerToOthers, player));
 		getTeam().sendTeamPlayers(TeamName.Runner,
 				Utilities.convertText(main.languagefile.catchRunnerToOthers, player));
-		getTeam().sendTeamPlayers(TeamName.RunnerPrisoner,
-				Utilities.convertText(main.languagefile.catchRunnerToOthers, player));
 
 		// change team
-		getTeam().changeTeam(player, TeamName.RunnerPrisoner);
+		getTeam().changeTeam(player, TeamName.Hunter);
 
 		// teleport
 		SendLog.send(
@@ -210,25 +215,13 @@ public class TagGame implements Listener {
 		teleportDelay(player);
 	}
 
-	public void out(Player player) {
-		if (!isGameStarting()) return;
-		getTeam().changeTeam(player, TeamName.OtherPlayer);
-		SendLog.debug("Player: " + player.getName() + " has been out.");
-		SendLog.send(Utilities.convertText(main.languagefile.outRunnerToPlayer, player), player);
-
-		getTeam().sendTeamPlayers(TeamName.Runner,
-				Utilities.convertText(main.languagefile.outRunnerToOthers, player));
-		getTeam().sendTeamPlayers(TeamName.Hunter,
-				Utilities.convertText(main.languagefile.outRunnerToOthers, player));
-	}
-
 	private void teleportDelay(Player damager) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				if (isGameStarting()) {
-					SendLog.debug("Player: " + damager.getName() + " has been teleported to the prison.");
-					damager.teleport(main.getGameManager().gamefile.prison_loc);
+					SendLog.debug("Player: " + damager.getName() + " has been teleported to the respawn.");
+					damager.teleport(main.gamefile.respawn_loc);
 				} else {
 					SendLog.debug("The game has been already finished, so woun't tp.");
 				}
@@ -243,10 +236,11 @@ public class TagGame implements Listener {
 	private boolean canStart() {
 		boolean can_start = true;
 		if (isGameStarting()) can_start = false;
-		if (gamefile.prison_loc == null) {
-			SendLog.error(main.languagefile.startCheckNotSetPrison);
-			can_start = false;
-		}
+		// TODO loc non-null check.
+		// if (gamefile.prison_loc == null) {
+		// SendLog.error(main.languagefile.startCheckNotSetPrison);
+		// can_start = false;
+		// }
 		if (0 == team.getTeamPlayers(TeamName.Runner).size()
 				|| 0 == team.getTeamPlayers(TeamName.Hunter).size()) {
 			SendLog.error(main.languagefile.startCheckNoPlayers);
