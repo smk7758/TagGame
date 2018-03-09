@@ -1,0 +1,8 @@
+name: TagGame_for_BellCocoa
+main: com.github.smk7758.TagGame
+version: 0.0.1
+author: smk7758
+permissions:
+commands:
+  TagGame:
+    description: TagGame's command.

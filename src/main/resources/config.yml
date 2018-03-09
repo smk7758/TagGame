@@ -1,0 +1,10 @@
+DebugMode: false
+Hunter:
+  Prefix: '&C'
+  DisplayName: 'Hunter'
+Runner:
+  Prefix: '&A'
+  DisplayName: 'Runner'
+OtherPlayer:
+  Prefix: '&F'
+  DisplayName: 'OtherPlayer'  

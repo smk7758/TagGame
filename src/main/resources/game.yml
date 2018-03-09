@@ -1,0 +1,25 @@
+GameName: test
+GameLength: 1 #1min
+TeleportWaitTime: 10 #10s
+HunterItems:
+  Feather:
+    Name: test
+    Lore:
+      - lore test.
+  Bone:
+    Name: test
+    Lore:
+      - lore test.
+Prison:
+  Location:
+    World: world
+    X: 0
+    Y: 0
+    Z: 0
+HunterBox:
+  Location:
+    X: 0
+    Y: 0
+    Z: 0
+Players:
+  - UUID: TeamName
