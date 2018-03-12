@@ -89,13 +89,9 @@ public class YamlFileManager {
 				SendLog.debug(field.getName() + " is not value.");
 
 				// 値型でなかったら、新しいインスタンスのオブジェクトをつくり、そのフィールドを再帰的にこのメソッドを用いて取得→代入。
-				Object field_object = null;
-				try {
-					field_object = field.getType().getConstructor(file_object.getClass()).newInstance(file_object);
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-				}
-				// 再帰的呼び出し
+				Object field_object = createNewInstance(field, file_object);
+
+				// 再帰的呼び出し→中のデータ型を代入させる。
 				loadFields(file_object, field_object, yaml_path_access);
 
 				// フィールドを代入されたオブジェクトを代入。
@@ -107,9 +103,21 @@ public class YamlFileManager {
 		return file_object;
 	}
 
+	private static Object createNewInstance(Field field, YamlFile file_object) {
+		Object field_object = null;
+		try {
+			field_object = field.getType().getConstructor(file_object.getClass()).newInstance(file_object);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return field_object;
+	}
+
 	private static void setField(Object dest_class_object, Field field, Object set_object) {
 		if (dest_class_object == null || field == null) throw new IllegalArgumentException("agrument is null.");
 		try {
+			System.out.println(dest_class_object.getClass().getName());
+			System.out.println(set_object != null ? set_object.getClass().getName() : "null");
 			field.set(dest_class_object, set_object);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();

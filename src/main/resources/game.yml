@@ -16,8 +16,15 @@ Lobby:
     X: 0
     Y: 0
     Z: 0
-HunterBox:
+Spawn:
   Location:
+    World: world
+    X: 0
+    Y: 0
+    Z: 0
+Respawn:
+  Location:
+    World: world
     X: 0
     Y: 0
     Z: 0

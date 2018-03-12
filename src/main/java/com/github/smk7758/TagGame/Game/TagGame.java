@@ -1,5 +1,6 @@
 package com.github.smk7758.TagGame.Game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,19 +53,27 @@ public class TagGame implements Listener {
 		wait_time = gamefile.TeleportWaitTime;
 		sidebar = new Sidebar(main, team.getTeamPlayers(TeamName.Runner).size(),
 				team.getTeamPlayers(TeamName.Hunter).size(), main.gamefile.GameName, main.gamefile.GameName);
-
-		List<? extends Player> online_players = (List<? extends Player>) Bukkit.getOnlinePlayers();
+		SendLog.send("NANN");
+		SendLog.send(" = SIZE" + Bukkit.getOnlinePlayers().size());
+		List<Player> online_players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+		online_players.forEach(player -> SendLog.send("Players: " + player.getName()));
 		online_players.removeIf(player -> !player.getGameMode().equals(GameMode.ADVENTURE));
 		if (team.getTeamPlayers(TeamName.Hunter).size() < 1) {
 			Collections.shuffle(online_players);
 			team.setTeam(TeamName.Hunter, online_players.get(0));
+			SendLog.send(main.languagefile.setToHunterOnStart, online_players.get(0));
 		}
 		if (team.getTeamPlayers(TeamName.Runner).size() < 1) {
+			online_players.removeIf(player -> team.isTeam(TeamName.Hunter, player));
 			online_players.forEach(player -> team.setTeam(TeamName.Runner, player));
+			SendLog.send(main.languagefile.setToRunnerOnStart, online_players.get(0));
 		}
 
-		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.teleport(main.gamefile.spawn_loc));
+		// TODO: HideName
 
+		// TP Runner
+		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.teleport(main.gamefile.spawn_loc));
+		// TP Hunter
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -236,14 +245,8 @@ public class TagGame implements Listener {
 	private boolean canStart() {
 		boolean can_start = true;
 		if (isGameStarting()) can_start = false;
-		// TODO loc non-null check.
-		// if (gamefile.prison_loc == null) {
-		// SendLog.error(main.languagefile.startCheckNotSetPrison);
-		// can_start = false;
-		// }
-		if (0 == team.getTeamPlayers(TeamName.Runner).size()
-				|| 0 == team.getTeamPlayers(TeamName.Hunter).size()) {
-			SendLog.error(main.languagefile.startCheckNoPlayers);
+		if (gamefile.lobby_loc == null || gamefile.spawn_loc == null || gamefile.respawn_loc == null) {
+			SendLog.error(main.languagefile.startCheckNotSetted);
 			can_start = false;
 		}
 		return can_start;

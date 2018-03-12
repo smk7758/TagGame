@@ -5,6 +5,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 
+import com.github.smk7758.TagGame.Commands.CommandExecuter;
+import com.github.smk7758.TagGame.Commands.TabCompleater;
 import com.github.smk7758.TagGame.Files.YamlFile;
 import com.github.smk7758.TagGame.Files.YamlFileManager;
 import com.github.smk7758.TagGame.Files.DataFiles.ConfigFile;

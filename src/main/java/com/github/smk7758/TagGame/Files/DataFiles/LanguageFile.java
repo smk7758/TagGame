@@ -11,9 +11,10 @@ public class LanguageFile extends YamlFile {
 	public String startToRunner, startToHunter, stop, finishByTimeToRunner, finishByTimeToHunter,
 			finishByCaughtToRunner, finishByCaughtToHunter, catchRunnerToPlayer, catchRunnerWaitTeleportToPlayer,
 			catchRunnerToOthers, outRunnerToOthers, outRunnerToPlayer,
-			lessCommandArguments, mustSendFromPlayer, saveCommand, reloadCommand, startCommand, startCommandError,
-			stopCommand, stopCommandError, setTeam, setTeamError, removeTeam, removeTeamError, addBook, addBookError,
-			startCheckNotSetPrison, startCheckNoPlayers;
+			lessCommandArguments, mustSendCommandFromPlayer, saveCommand, reloadCommand, startCommand,
+			startCommandError,
+			stopCommand, stopCommandError, setTeam, setTeamError, removeTeam, removeTeamError, setLocation,
+			startCheckNotSetted, startCheckNoPlayers, setToHunterOnStart, setToRunnerOnStart;
 
 	public LanguageFile(Plugin plugin) {
 		super(plugin);

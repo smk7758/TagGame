@@ -44,7 +44,6 @@ public class ConfigFile extends YamlFile {
 	public void loadField() {
 		Main.debug_mode = DebugMode;
 		loadPlayers();
-		testPlayers();
 	}
 
 	public void loadPlayers() {
@@ -62,42 +61,6 @@ public class ConfigFile extends YamlFile {
 				SendLog.debug("Player(in ConfigFile) prefix and displayname!");
 			}
 		}
-		// try {
-		// for (TeamName teamname : TeamName.values()) {
-		// SendLog.debug("TeamName: " + teamname.toString());
-		// Field field_class = this.getClass().getField(teamname.toString());
-		// SendLog.debug("ClassName: " + field_class.getName());
-		// for (Field field_class_field : field_class.getClass().getFields()) {
-		// SendLog.debug("ClassField: " + field_class_field.getName());
-		// if (Modifier.isFinal(field_class_field.getModifiers())) {
-		// SendLog.debug("is final!");
-		// continue;
-		// } else {
-		// SendLog.debug("not final!");
-		// teamname.getClass().getField(field_class_field.getName()).set(this,
-		// field_class_field.get(field_class));
-		// }
-		// }
-		// }
-		// } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-		// ex.printStackTrace();
-		// }
-		// for (TeamName teamname : TeamName.values()) {
-		// Field field_class = this.getClass().getField(teamname.toString());
-		// SendLog.debug("ClassName: " + field_class.getName());
-		// for (Field field_teamname : teamname.getClass().getFields()) {
-		// SendLog.debug("TeamNameField: " + field_teamname.getName());
-		// Field field_class_field = field_class.getClass().getField(field_teamname.getName());
-		// SendLog.debug("ClassField: " + field_class_field.getName());
-		// field_teamname.set(teamname, field_class_field.get(field_class));
-		// }
-		// }
-	}
-
-	public void testPlayers() {
-		SendLog.debug("TEST Players in ConfigFile.");
-		SendLog.debug(TeamName.Hunter.displayname);
-		SendLog.debug(TeamName.Hunter.prefix);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.github.smk7758.TagGame;
+package com.github.smk7758.TagGame.Commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+
+import com.github.smk7758.TagGame.Main;
 
 public class TabCompleater implements TabCompleter {
 	public Main main = null;
