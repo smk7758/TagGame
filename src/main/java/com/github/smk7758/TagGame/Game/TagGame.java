@@ -56,8 +56,13 @@ public class TagGame implements Listener {
 		SendLog.send("NANN");
 		SendLog.send(" = SIZE" + Bukkit.getOnlinePlayers().size());
 		List<Player> online_players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+		Collections.shuffle(online_players);
 		online_players.forEach(player -> SendLog.send("Players: " + player.getName()));
 		online_players.removeIf(player -> !player.getGameMode().equals(GameMode.ADVENTURE));
+		if (online_players.size() < 2) {
+			SendLog.error("Player too small");
+			return false;
+		}
 		if (team.getTeamPlayers(TeamName.Hunter).size() < 1) {
 			Collections.shuffle(online_players);
 			team.setTeam(TeamName.Hunter, online_players.get(0));

@@ -8,6 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.github.smk7758.TagGame.Util.SendLog;
 
@@ -95,7 +96,7 @@ public class YamlFileManager {
 				loadFields(file_object, field_object, yaml_path_access);
 
 				// フィールドを代入されたオブジェクトを代入。
-				setField(file_object, field, field_object);
+				setField(parent, field, field_object);
 				SendLog.debug(field.getName() + " has been set.");
 			}
 		}
@@ -113,12 +114,16 @@ public class YamlFileManager {
 		return field_object;
 	}
 
-	private static void setField(Object dest_class_object, Field field, Object set_object) {
-		if (dest_class_object == null || field == null) throw new IllegalArgumentException("agrument is null.");
+	private static void setField(Object dest_class_object_parent, Field field, Object set_object) {
+		if (dest_class_object_parent == null || field == null) throw new IllegalArgumentException("agrument is null.");
 		try {
-			System.out.println(dest_class_object.getClass().getName());
-			System.out.println(set_object != null ? set_object.getClass().getName() : "null");
-			field.set(dest_class_object, set_object);
+			SendLog.getLogger().log(Level.FINEST, "--!!!!--");
+			SendLog.getLogger().log(Level.FINEST, "DestClass: " + dest_class_object_parent.getClass().getName());
+			SendLog.getLogger().log(Level.FINEST,
+					"SetObject: " + ((set_object != null) ? set_object.getClass().getName() : "null"));
+			SendLog.getLogger().log(Level.FINEST, "Field: " + field.getName());
+			SendLog.getLogger().log(Level.FINEST, "----");
+			field.set(dest_class_object_parent, set_object);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

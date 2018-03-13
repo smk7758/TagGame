@@ -40,6 +40,18 @@ public class GameFile extends YamlFile {
 		public List<String> Lore;
 	}
 
+	public class Time {
+		public int minute = 0;
+
+		public Time(int minute) {
+			this.minute = minute;
+		}
+
+		public int getAsSecond() {
+			return minute * 60;
+		}
+	}
+
 	public GameFile(Plugin plugin) {
 		super(plugin);
 	}
@@ -73,36 +85,15 @@ public class GameFile extends YamlFile {
 		return new Location(world, x, y, z);
 	}
 
-	public class Time {
-		public int minute = 0;
-
-		public Time(int minute) {
-			this.minute = minute;
-		}
-
-		public int getAsSecond() {
-			return minute * 60;
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private void testFields() {
-		SendLog.debug("LOADING...");
-		SendLog.debug(file_name);
-		SendLog.debug(GameName);
-		SendLog.debug(GameLength.toString());
-		// Players.forEach((player, teamname) -> SendLog.debug(player + " , " + teamname));
-	}
-
 	@Override
 	public void saveField() {
-		// TODO
-		// saveLocaton();
+		saveLocaton(lobby_loc, "Lobby");
+		saveLocaton(spawn_loc, "Spawn");
+		saveLocaton(respawn_loc, "Respawn");
 	}
 
-	private void saveLocaton(Location loc) {
+	private void saveLocaton(Location loc, String path) {
 		if (loc == null) return;
-		String path = "Prison.Location";
 		getFileConfiguration().set(path + ".World", loc.getWorld().getName());
 		getFileConfiguration().set(path + ".X", loc.getX());
 		getFileConfiguration().set(path + ".Y", loc.getY());

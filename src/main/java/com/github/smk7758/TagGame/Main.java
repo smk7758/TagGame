@@ -21,10 +21,9 @@ public class Main extends JavaPlugin {
 	private GameListener game_listner = new GameListener(this);
 	private TagGame game_manager = null;
 	private Scoreboard scoreboard = null;
-	private YamlFileManager yfm = null;
-	public ConfigFile configfile = null;
-	public GameFile gamefile = null;
-	public LanguageFile languagefile = null;
+	public ConfigFile configfile = new ConfigFile(this);
+	public GameFile gamefile = new GameFile(this);
+	public LanguageFile languagefile = new LanguageFile(this);
 
 	@Override
 	public void onEnable() {
@@ -33,17 +32,13 @@ public class Main extends JavaPlugin {
 		final PluginCommand cmd_tosogame = getCommand("TagGame");
 		cmd_tosogame.setExecutor(new CommandExecuter(this));
 		cmd_tosogame.setTabCompleter(new TabCompleater(this));
-		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard(); // better after calling plugin.
+		game_manager = new TagGame(this); // have to call after scoreboard.
 
-		configfile = new ConfigFile(this);
 		saveResource(configfile, false);
-		gamefile = new GameFile(this);
 		saveResource(gamefile, false);
-		languagefile = new LanguageFile(this);
 		saveResource(languagefile, false);
 		reloadFiles(); // load field to class object.
-
-		game_manager = new TagGame(this);
 	}
 
 	@Override
@@ -54,10 +49,6 @@ public class Main extends JavaPlugin {
 		configfile = (ConfigFile) YamlFileManager.reloadYamlFile(configfile);
 		gamefile = (GameFile) YamlFileManager.reloadYamlFile(gamefile);
 		languagefile = (LanguageFile) YamlFileManager.reloadYamlFile(languagefile);
-	}
-
-	public YamlFileManager getYamlFileManager() {
-		return yfm;
 	}
 
 	public TagGame getGameManager() {
