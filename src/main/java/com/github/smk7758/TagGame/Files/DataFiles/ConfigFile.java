@@ -4,7 +4,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.github.smk7758.TagGame.Main;
 import com.github.smk7758.TagGame.Files.YamlFile;
-import com.github.smk7758.TagGame.Game.ScorebordTeam.TeamName;
+import com.github.smk7758.TagGame.Game.TeamManager.TeamName;
 import com.github.smk7758.TagGame.Util.SendLog;
 
 public class ConfigFile extends YamlFile {
@@ -12,7 +12,7 @@ public class ConfigFile extends YamlFile {
 	public boolean DebugMode = false;
 	public Hunter Hunter;
 	public Runner Runner;
-	public RunnerPrisoner RunnerPrisoner;
+	public CaughtRunner CaughtRunner;
 	public OtherPlayer OtherPlayer;
 
 	public class Player {
@@ -25,7 +25,7 @@ public class ConfigFile extends YamlFile {
 	public class Runner extends Player {
 	}
 
-	public class RunnerPrisoner extends Player {
+	public class CaughtRunner extends Player {
 	}
 
 	public class OtherPlayer extends Player {

@@ -90,7 +90,7 @@ public class YamlFileManager {
 				SendLog.debug(field.getName() + " is not value.");
 
 				// 値型でなかったら、新しいインスタンスのオブジェクトをつくり、そのフィールドを再帰的にこのメソッドを用いて取得→代入。
-				Object field_object = createNewInstance(field, file_object);
+				Object field_object = createNewInstance(field, parent);
 
 				// 再帰的呼び出し→中のデータ型を代入させる。
 				loadFields(file_object, field_object, yaml_path_access);
@@ -104,26 +104,31 @@ public class YamlFileManager {
 		return file_object;
 	}
 
-	private static Object createNewInstance(Field field, YamlFile file_object) {
+	private static Object createNewInstance(Field field, Object parents) {
 		Object field_object = null;
 		try {
-			field_object = field.getType().getConstructor(file_object.getClass()).newInstance(file_object);
+			field_object = field.getType().getConstructor(parents.getClass()).newInstance(parents);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return field_object;
 	}
 
-	private static void setField(Object dest_class_object_parent, Field field, Object set_object) {
+	/**
+	 * @param dest_class_object_parent そのフィールドの親のオブジェクト。
+	 * @param field 値を定めさせたいフィールド。
+	 * @param set_data_object フィールドに定めさせたい値。
+	 */
+	private static void setField(Object dest_class_object_parent, Field field, Object set_data_object) {
 		if (dest_class_object_parent == null || field == null) throw new IllegalArgumentException("agrument is null.");
 		try {
 			SendLog.getLogger().log(Level.FINEST, "--!!!!--");
 			SendLog.getLogger().log(Level.FINEST, "DestClass: " + dest_class_object_parent.getClass().getName());
 			SendLog.getLogger().log(Level.FINEST,
-					"SetObject: " + ((set_object != null) ? set_object.getClass().getName() : "null"));
+					"SetObject: " + ((set_data_object != null) ? set_data_object.getClass().getName() : "null"));
 			SendLog.getLogger().log(Level.FINEST, "Field: " + field.getName());
 			SendLog.getLogger().log(Level.FINEST, "----");
-			field.set(dest_class_object_parent, set_object);
+			field.set(dest_class_object_parent, set_data_object);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

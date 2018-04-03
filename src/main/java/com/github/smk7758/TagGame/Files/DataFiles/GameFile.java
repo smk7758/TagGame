@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.github.smk7758.TagGame.Files.YamlFile;
 import com.github.smk7758.TagGame.Files.YamlFileExceptField;
-import com.github.smk7758.TagGame.Game.ScorebordTeam.TeamName;
+import com.github.smk7758.TagGame.Game.TeamManager.TeamName;
 import com.github.smk7758.TagGame.Util.SendLog;
 
 public class GameFile extends YamlFile {
@@ -28,16 +28,16 @@ public class GameFile extends YamlFile {
 	public class HunterItems {
 		public Feather Feather;
 		public Bone Bone;
-	}
 
-	public class Feather {
-		public String Name;
-		public List<String> Lore;
-	}
+		public class Feather {
+			public String Name;
+			public List<String> Lore;
+		}
 
-	public class Bone {
-		public String Name;
-		public List<String> Lore;
+		public class Bone {
+			public String Name;
+			public List<String> Lore;
+		}
 	}
 
 	public class Time {
@@ -87,9 +87,9 @@ public class GameFile extends YamlFile {
 
 	@Override
 	public void saveField() {
-		saveLocaton(lobby_loc, "Lobby");
-		saveLocaton(spawn_loc, "Spawn");
-		saveLocaton(respawn_loc, "Respawn");
+		saveLocaton(lobby_loc, "Lobby.Location");
+		saveLocaton(spawn_loc, "Spawn.Location");
+		saveLocaton(respawn_loc, "Respawn.Location");
 	}
 
 	private void saveLocaton(Location loc, String path) {

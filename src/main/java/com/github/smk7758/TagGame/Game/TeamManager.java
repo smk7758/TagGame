@@ -12,11 +12,11 @@ import org.bukkit.scoreboard.Team;
 import com.github.smk7758.TagGame.Main;
 import com.github.smk7758.TagGame.Util.SendLog;
 
-public class ScorebordTeam {
+public class TeamManager {
 	// private Main main = null;
 	private Scoreboard scoreboard = null;
 
-	public ScorebordTeam(Main main) {
+	public TeamManager(Main main) {
 		// this.main = main;
 		scoreboard = main.getScoreBoard();
 		for (TeamName name : TeamName.values()) {
@@ -29,7 +29,7 @@ public class ScorebordTeam {
 
 	// TODO: staticなんでいつか変更.
 	public enum TeamName {
-		Hunter("Hunter", "&C"), Runner("Runner", "&A");
+		Hunter("Hunter", "&C"), Runner("Runner", "&A"), CaughtRunner("CaughtRunner", "&A");
 
 		public String displayname, prefix;
 
@@ -94,12 +94,14 @@ public class ScorebordTeam {
 	}
 
 	public void removeTeamAll(TeamName name) {
-		getTeam(name).getEntries().removeAll(getTeam(name).getEntries());
-		// getTeam(name).getEntries().forEach(uuid -> getTeam(name).removeEntry(uuid));
+		// getTeam(name).getEntries().removeAll(getTeam(name).getEntries());
+		// Because of immutable collection cannot be changed.
+		getTeam(name).getEntries().forEach(uuid -> getTeam(name).removeEntry(uuid));
 	}
 
 	public void clearTeam() {
 		for (TeamName name : TeamName.values()) {
+			SendLog.debug("ClearTeam: " + name.toString());
 			removeTeamAll(name);
 		}
 	}

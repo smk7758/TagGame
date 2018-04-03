@@ -5,3 +5,6 @@ Hunter:
 Runner:
   Prefix: '&A'
   DisplayName: 'Runner'
+CaughtRunner:
+  Prefix: '&A'
+  DisplayName: 'CaughtRunner'

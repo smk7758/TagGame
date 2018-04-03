@@ -10,7 +10,7 @@ public class LanguageFile extends YamlFile {
 	private final String file_name = "language.yml";
 	public String startToRunner, startToHunter, stop, finishByTimeToRunner, finishByTimeToHunter,
 			finishByCaughtToRunner, finishByCaughtToHunter, catchRunnerToPlayer, catchRunnerWaitTeleportToPlayer,
-			catchRunnerToOthers, outRunnerToOthers, outRunnerToPlayer,
+			catchRunnerToOthers, outRunnerToOthers, outRunnerToPlayer, lessPlayersOfAdventure,
 			lessCommandArguments, mustSendCommandFromPlayer, saveCommand, reloadCommand, startCommand,
 			startCommandError,
 			stopCommand, stopCommandError, setTeam, setTeamError, removeTeam, removeTeamError, setLocation,

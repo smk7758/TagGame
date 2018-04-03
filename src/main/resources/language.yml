@@ -12,6 +12,9 @@ outRunnerToOthers: '%Player% has been out from the TosoGame.'
 outRunnerToPlayer: 'You have been out from the TosoGame.'
 setToHunterOnStart: 'You have been setted to Hunter.'
 setToRunnerOnStart: 'You have been setted to Runner.'
+lessPlayersOfAdventure: 'Players of Gamemode: Adventure, are too small.'
+#Check
+startCheckNotSetted: 'Please set location.'
 #Command
 lessCommandArguments: 'Please write arguments.'
 mustSendCommandFromPlayer: 'This command must use from player.'
@@ -26,5 +29,3 @@ setTeamError: 'Cannot add %Player% to Team: %Team%'
 removeTeam: ' %Player% has been removed from Team: %Team%'
 removeTeamError: 'Cannot remove %Player% from Team:%Team%'
 setLocation: 'Success to set location: %Location%'
-#Check
-startCheckNotSetted: 'Please set location.'

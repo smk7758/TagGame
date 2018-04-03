@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.github.smk7758.TagGame.Main;
 import com.github.smk7758.TagGame.Files.YamlFileManager;
-import com.github.smk7758.TagGame.Game.ScorebordTeam.TeamName;
+import com.github.smk7758.TagGame.Game.TeamManager.TeamName;
 import com.github.smk7758.TagGame.Util.SendLog;
 import com.github.smk7758.TagGame.Util.Utilities;
 
@@ -110,15 +110,20 @@ public class CommandExecuter implements CommandExecutor {
 	}
 
 	public void setTeam(TeamName name, String player_name, CommandSender sender) {
-		boolean success = main.getGameManager().getTeam().setTeam(name, player_name);
+		boolean success = main.getGameManager().getTeamManager().setTeam(name, player_name);
 		if (success) SendLog.send(Utilities.convertText(main.languagefile.setTeam, "%Player%",
 				player_name, "%Team%", name.toString()), sender);
 		else SendLog.error(Utilities.convertText(main.languagefile.setTeamError, "%Player%",
 				player_name, "%Team%", name.toString()), sender);
+
+		// remove from other team
+		for (TeamName name_not : TeamName.values()) {
+			if (name != name_not) main.getGameManager().getTeamManager().removeTeam(name, player_name);
+		}
 	}
 
 	public void removeTeam(TeamName name, String player_name, CommandSender sender) {
-		boolean success = main.getGameManager().getTeam().removeTeam(name, player_name);
+		boolean success = main.getGameManager().getTeamManager().removeTeam(name, player_name);
 		if (success) SendLog.send(Utilities.convertText(main.languagefile.removeTeam, "%Player%",
 				player_name, "%Team%", name.toString()), sender);
 		else SendLog.error(Utilities.convertText(main.languagefile.removeTeamError, "%Player%",
@@ -127,25 +132,10 @@ public class CommandExecuter implements CommandExecutor {
 
 	public void showTeam(TeamName name, CommandSender sender) {
 		SendLog.send("Team: " + name, sender);
-		main.getGameManager().getTeam().getTeamPlayers(name)
+		main.getGameManager().getTeamManager().getTeamPlayers(name)
 				.forEach(player -> SendLog.send(player.getName(), sender));
 	}
 
 	private void showCommandList(CommandSender sender) {
-		SendLog.send("<TosoGame Command List>", sender);
-		SendLog.send("TosoGame (help)", sender);
-		SendLog.send("-- show you command list.", sender);
-		SendLog.send("TosoGame set prison", sender);
-		SendLog.send("-- set prison.", sender);
-		SendLog.send("TosoGame set <hunter, runner, otherplayer> <player name>", sender);
-		SendLog.send("-- set player to each team.", sender);
-		SendLog.send("TosoGame remove <hunter, runner, otherplayer> <player name>", sender);
-		SendLog.send("-- remove player from each team.", sender);
-		SendLog.send("TosoGame show <hunter, runner, otherplayer> (<player name>)", sender);
-		SendLog.send("-- show which player is in the team.", sender);
-		SendLog.send("TosoGame start", sender);
-		SendLog.send("-- start TosoGame!", sender);
-		SendLog.send("TosoGame stop", sender);
-		SendLog.send("-- stop TosoGame", sender);
 	}
 }

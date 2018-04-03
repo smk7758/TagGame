@@ -6,3 +6,4 @@ permissions:
 commands:
   TagGame:
     description: TagGame's command.
+    aliases: [oni, tag]
