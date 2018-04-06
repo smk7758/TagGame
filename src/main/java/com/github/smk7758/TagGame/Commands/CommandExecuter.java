@@ -83,6 +83,12 @@ public class CommandExecuter implements CommandExecutor {
 					player_out = Bukkit.getPlayer(args[1]);
 				}
 				main.getGameManager().caught(player_out);
+			} else if (args[0].equalsIgnoreCase("show")) {
+				for (TeamName name : TeamName.values()) {
+					SendLog.send("Team: " + name.toString(), sender);
+					main.getGameManager().getTeamManager().getTeamPlayers(name)
+							.forEach(player -> SendLog.send(" - " + player.getName(), sender));
+				}
 			} else if (args[0].equalsIgnoreCase("save")) {
 				YamlFileManager.saveYamlFile(main.configfile);
 				YamlFileManager.saveYamlFile(main.gamefile);
@@ -116,10 +122,11 @@ public class CommandExecuter implements CommandExecutor {
 		else SendLog.error(Utilities.convertText(main.languagefile.setTeamError, "%Player%",
 				player_name, "%Team%", name.toString()), sender);
 
+		// TODO
 		// remove from other team
-		for (TeamName name_not : TeamName.values()) {
-			if (name != name_not) main.getGameManager().getTeamManager().removeTeam(name, player_name);
-		}
+		// for (TeamName name_not : TeamName.values()) {
+		// if (name != name_not) main.getGameManager().getTeamManager().removeTeam(name, player_name);
+		// }
 	}
 
 	public void removeTeam(TeamName name, String player_name, CommandSender sender) {

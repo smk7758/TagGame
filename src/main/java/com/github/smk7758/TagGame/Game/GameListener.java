@@ -1,5 +1,7 @@
 package com.github.smk7758.TagGame.Game;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,11 +25,11 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onPlayerAttackPlayer(EntityDamageByEntityEvent event) {
 		if (!main.getGameManager().isGameStarting()) return;
-		Entity attacker_ = event.getDamager();
-		Entity damager_ = event.getEntity();
+		final Entity attacker_ = event.getDamager();
+		final Entity damager_ = event.getEntity();
 		if (!(attacker_ instanceof Player && damager_ instanceof Player)) return;
-		Player attacker = (Player) attacker_;
-		Player damager = (Player) damager_;
+		final Player attacker = (Player) attacker_;
+		final Player damager = (Player) damager_;
 		if (!(main.getGameManager().getTeamManager().isTeam(TeamName.Hunter, attacker)
 				&& main.getGameManager().getTeamManager().isTeam(TeamName.Runner, damager))) return;
 		// --- finish check ---
@@ -40,15 +42,22 @@ public class GameListener implements Listener {
 		if (event.getItem() == null) return;
 		if (!event.getItem().hasItemMeta()) return;
 		if (event.getItem().getItemMeta().getDisplayName() == null) return;
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		if (!main.getGameManager().getTeamManager().isTeam(TeamName.Runner, player)) return;
-		if (event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.HunterItems.Feather.Name)
-				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.HunterItems.Feather.Lore)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5, 0));
+		if (event.getItem().getType().equals(Material.FEATHER)
+				&& event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.RunnerItems.Feather.Name)
+				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.RunnerItems.Feather.Lore)) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5 * 20, 0));
 			SendLog.debug("used feather", player);
-		} else if (event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.HunterItems.Bone.Name)
-				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.HunterItems.Bone.Lore)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5, 0));
+		} else if (event.getItem().getType().equals(Material.BONE)
+				&& event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.RunnerItems.Bone.Name)
+				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.RunnerItems.Bone.Lore)) {
+			main.getGameManager().getTeamManager().getTeamPlayers(TeamName.Hunter)
+					.forEach(hunter_player -> hunter_player.hidePlayer(player));
+			Bukkit.getScheduler().runTaskLater(main, () -> {
+				main.getGameManager().getTeamManager().getTeamPlayers(TeamName.Hunter)
+						.forEach(hunter_player -> hunter_player.showPlayer(player));
+			}, 5 * 20);
 			SendLog.debug("used bone", player);
 			// TODO effect or bukkit invisible
 		}

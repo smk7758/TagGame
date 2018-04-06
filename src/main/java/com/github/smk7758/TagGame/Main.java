@@ -14,6 +14,7 @@ import com.github.smk7758.TagGame.Files.DataFiles.GameFile;
 import com.github.smk7758.TagGame.Files.DataFiles.LanguageFile;
 import com.github.smk7758.TagGame.Game.GameListener;
 import com.github.smk7758.TagGame.Game.TagGame;
+import com.github.smk7758.TagGame.Util.SendLog;
 
 public class Main extends JavaPlugin {
 	public static final String plugin_name = "TagGame_for_BellCocoa";
@@ -43,6 +44,10 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		if (getGameManager().isGameStarting()) {
+			getGameManager().stop();
+			SendLog.error("Due to plugin is disabling, the game will stop.");
+		}
 	}
 
 	public void reloadFiles() {

@@ -23,9 +23,9 @@ public class GameFile extends YamlFile {
 	public Map<String, TeamName> Players; // TODO
 	@YamlFileExceptField
 	public Location lobby_loc, spawn_loc, respawn_loc;
-	public HunterItems HunterItems;
+	public RunnerItems RunnerItems;
 
-	public class HunterItems {
+	public class RunnerItems {
 		public Feather Feather;
 		public Bone Bone;
 

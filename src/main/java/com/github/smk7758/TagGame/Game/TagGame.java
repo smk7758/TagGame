@@ -48,11 +48,31 @@ public class TagGame implements Listener {
 		time_count = gamefile.GameLength.getAsSecond();
 		wait_time = gamefile.TeleportWaitTime;
 
-		SendLog.send("Start!");
-		SendLog.send(" OnlinePlayers size: " + Bukkit.getOnlinePlayers().size());
+		SendLog.debug("TagGame start state.");
+		SendLog.debug("OnlinePlayers size: " + Bukkit.getOnlinePlayers().size());
 
 		final boolean player_management_success = managePlayers();
 		if (!player_management_success) return false;
+
+		SendLog.debug("<Show Teams>");
+		for (TeamName name : TeamName.values()) {
+			SendLog.debug("Team: " + name.toString());
+			main.getGameManager().getTeamManager().getTeamPlayers(name)
+					.forEach(player -> SendLog.debug(" - " + player.getName()));
+		}
+
+		// clear and remove the inv and effects
+		clearInventoryies(TeamName.Runner);
+		clearInventoryies(TeamName.Hunter);
+		removeAllPotionEffects(TeamName.Hunter);
+
+		// set exp
+		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setExp((float) 1.0));// TEST
+		team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setExp((float) 1.0));// TEST // TODO
+
+		// addHunterItems
+		// TODO
+		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.getInventory().addItem(getRunnerItems()));
 
 		// TODO: HideName
 
@@ -67,22 +87,16 @@ public class TagGame implements Listener {
 			teleportPlayers(TeamName.Hunter, gamefile.spawn_loc);
 		}, wait_time * 20);
 
-		clearInventoryies(TeamName.Runner);
-		clearInventoryies(TeamName.Hunter);
-		removeAllPotionEffects(TeamName.Hunter);
-		team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setTotalExperience(8));// TEST // TODO
-		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setTotalExperience(8));// TEST
-
-		// addHunterItems
-		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.getInventory().addItem(getRunnerItems()));
-
 		// send start!
 		team.sendTeamPlayers(TeamName.Hunter, main.languagefile.startToHunter);
 		team.sendTeamPlayers(TeamName.Runner, main.languagefile.startToRunner);
 
 		loop();
-		// finishByTimeLimit();
+		callFinish();
 		switchIsGameStarting();
+
+		SendLog.debug("Started the game in " + gamefile.GameLength.getAsSecond() + " second.");
+
 		return true;
 	}
 
@@ -128,25 +142,29 @@ public class TagGame implements Listener {
 
 	public void loop() {
 		loop = new BukkitRunnable() {
-			PotionEffect potion_effect = new PotionEffect(PotionEffectType.SPEED, Short.MAX_VALUE, 0);
+			private final PotionEffect potion_effect = new PotionEffect(PotionEffectType.SPEED, Short.MAX_VALUE, 0);
 
 			@Override
 			public void run() {
-				if (team.getTeamPlayers(TeamName.Runner).size() < 1) {
-					// 全員捕まった！
-					finishByCaught();
-				} else {
+				if (isGameStarting()) {
 					time_count -= 1;
-					sidebar.update(team.getTeamPlayers(TeamName.Runner).size(),
+					sidebar.update(
+							team.getTeamPlayers(TeamName.Runner).size(),
 							team.getTeamPlayers(TeamName.Hunter).size());
-					team.getTeamPlayers(TeamName.Hunter)
-							.forEach(player -> player.addPotionEffect(potion_effect));
-					team.getTeamPlayers(TeamName.Hunter)
-							.forEach(player -> player
-									.setTotalExperience(time_count / gamefile.GameLength.getAsSecond() * 8));
-					team.getTeamPlayers(TeamName.Runner)
-							.forEach(player -> player
-									.setTotalExperience(time_count / gamefile.GameLength.getAsSecond() * 8)); // TODO
+
+					if (time_count < 0) {
+						finishByTimeLimit();
+						return;
+					}
+
+					final float exp_amount = (float) ((double) time_count / (double) gamefile.GameLength.getAsSecond());
+					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setExp(exp_amount));
+					team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setExp(exp_amount));
+
+					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.addPotionEffect(potion_effect));
+
+					SendLog.debug("LeftTime: " + time_count);
+					SendLog.debug("Percent: " + exp_amount);
 				}
 			}
 		}.runTaskTimer(main, 0, 1 * 20);
@@ -155,41 +173,48 @@ public class TagGame implements Listener {
 	public boolean finishByCaught() {
 		// TODO: 直で出すのはなんか物足りない。
 		if (!isGameStarting()) return false;
-		team.sendTeamPlayers(TeamName.Hunter, main.languagefile.finishByCaughtToHunter);
-		team.sendTeamPlayers(TeamName.Runner, main.languagefile.finishByCaughtToRunner);
+		team.sendAllTeamPlayers(main.languagefile.finishByCaughtToRunner);
 		close();
 		return true;
 	}
 
-	public void finishByTimeLimit() {
+	public void callFinish() {
 		finish = new BukkitRunnable() {
 			@Override
 			public void run() {
-				if (isGameStarting()) {
-					team.sendTeamPlayers(TeamName.Hunter, main.languagefile.finishByTimeToHunter);
-					team.sendTeamPlayers(TeamName.Runner, main.languagefile.finishByTimeToRunner);
-					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.teleport(gamefile.lobby_loc));
-					team.getTeamPlayers(TeamName.Runner).forEach(player -> player.teleport(gamefile.lobby_loc));
-					close();
-				}
+				finishByTimeLimit();
 			}
 		}.runTaskLater(main, gamefile.GameLength.getAsSecond() * 20);
 	}
 
+	private void finishByTimeLimit() {
+		if (isGameStarting()) {
+			team.sendAllTeamPlayers(main.languagefile.finishByTimeToHunter);
+			close();
+		}
+	}
+
 	public boolean stop() {
 		if (!isGameStarting()) return false;
-		team.sendTeamPlayers(TeamName.Hunter, main.languagefile.stop);
-		team.sendTeamPlayers(TeamName.Runner, main.languagefile.stop);
+		team.sendAllTeamPlayers(main.languagefile.stop);
 		close();
 		return true;
 	}
 
 	private boolean close() {
 		if (!isGameStarting()) return false;
+
+		sidebar.close(); // better to do first.
+
+		// TP
+		team.getAllTeamPlayers().forEach(player -> player.teleport(gamefile.lobby_loc));
+
+		// clears
 		clearInventoryies(TeamName.Runner);
 		removeAllPotionEffects(TeamName.Hunter);
 
-		sidebar.close(); // must do first.
+		// set exp 0
+		team.getAllTeamPlayers().forEach(player -> player.setExp(0));
 
 		team.clearTeam();
 		if (loop != null) {
@@ -216,7 +241,13 @@ public class TagGame implements Listener {
 				Utilities.convertText(main.languagefile.catchRunnerToOthers, player));
 
 		// change team
-		getTeamManager().changeTeam(player, TeamName.CaughtRunner);
+		changeRunnerToCaughtRunner(player);
+
+		if (team.getTeamPlayers(TeamName.Runner).size() < 1) {
+			// 全員捕まった！
+			finishByCaught();
+			return;
+		}
 
 		// teleporting message
 		SendLog.send(
@@ -232,6 +263,11 @@ public class TagGame implements Listener {
 				SendLog.debug("The game has been already finished, so woun't tp.");
 			}
 		}, wait_time * 20);
+	}
+
+	private void changeRunnerToCaughtRunner(Player player_runner) {
+		player_runner.getInventory().clear();
+		getTeamManager().changeTeam(player_runner, TeamName.CaughtRunner);
 	}
 
 	private void clearInventoryies(TeamName name) {
@@ -257,8 +293,9 @@ public class TagGame implements Listener {
 	private ItemStack getFeather() {
 		ItemStack itemstack = new ItemStack(Material.FEATHER);
 		ItemMeta itemmeta = itemstack.getItemMeta();
-		itemmeta.setDisplayName(gamefile.HunterItems.Feather.Name);
-		itemmeta.setLore(gamefile.HunterItems.Feather.Lore);
+		SendLog.debug("Feather name: " + gamefile.RunnerItems.Feather.Name);
+		itemmeta.setDisplayName(gamefile.RunnerItems.Feather.Name);
+		itemmeta.setLore(gamefile.RunnerItems.Feather.Lore);
 		itemstack.setItemMeta(itemmeta);
 		return itemstack;
 	}
@@ -266,8 +303,9 @@ public class TagGame implements Listener {
 	private ItemStack getBone() {
 		ItemStack itemstack = new ItemStack(Material.BONE);
 		ItemMeta itemmeta = itemstack.getItemMeta();
-		itemmeta.setDisplayName(gamefile.HunterItems.Bone.Name);
-		itemmeta.setLore(gamefile.HunterItems.Bone.Lore);
+		SendLog.debug("Bone name: " + gamefile.RunnerItems.Bone.Name);
+		itemmeta.setDisplayName(gamefile.RunnerItems.Bone.Name);
+		itemmeta.setLore(gamefile.RunnerItems.Bone.Lore);
 		itemstack.setItemMeta(itemmeta);
 		return itemstack;
 	}

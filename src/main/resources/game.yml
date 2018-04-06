@@ -1,7 +1,7 @@
 GameName: test
 GameLength: 1 #1min
 TeleportWaitTime: 10 #10s
-HunterItems:
+RunnerItems:
   Feather:
     Name: test
     Lore:

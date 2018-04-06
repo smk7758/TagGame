@@ -47,15 +47,25 @@ public class TeamManager {
 		return scoreboard.getTeam(name.name());
 	}
 
-	public Set<Player> getTeamPlayers(TeamName name) {
+	public Set<Player> getTeamPlayers(TeamName... names) {
 		Set<Player> players = new HashSet<>();
-		getTeam(name).getEntries().forEach(uuid -> players.add(Bukkit.getPlayer(UUID.fromString(uuid))));
-		players.removeIf(player -> player == null);
+		for (TeamName name : names) {
+			getTeam(name).getEntries().forEach(uuid -> players.add(Bukkit.getPlayer(UUID.fromString(uuid))));
+			players.removeIf(player -> player == null);
+		}
 		return players;
+	}
+
+	public Set<Player> getAllTeamPlayers() {
+		return getTeamPlayers(TeamName.values());
 	}
 
 	public void sendTeamPlayers(TeamName name, String text) {
 		getTeamPlayers(name).forEach(player -> SendLog.send(text, player));
+	}
+
+	public void sendAllTeamPlayers(String text) {
+		getTeamPlayers(TeamName.values()).forEach(player -> SendLog.send(text, player));
 	}
 
 	public boolean isTeam(TeamName name, Player player) {

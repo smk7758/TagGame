@@ -209,7 +209,7 @@ public class YamlFileManager {
 				}
 			} else {
 				try {
-					saveFields(file_object, field.get(file_object), yaml_path_access);
+					saveFields(file_object, field.get(parent), yaml_path_access);
 				} catch (IllegalArgumentException | IllegalAccessException ex) {
 					ex.printStackTrace();
 				}
