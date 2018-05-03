@@ -12,6 +12,7 @@ import com.github.smk7758.TagGame.Files.YamlFile;
 import com.github.smk7758.TagGame.Files.YamlFileExceptField;
 import com.github.smk7758.TagGame.Game.TeamManager.TeamName;
 import com.github.smk7758.TagGame.Util.SendLog;
+import com.github.smk7758.TagGame.Util.Utilities;
 
 public class GameFile extends YamlFile {
 	private final String file_name = "game.yml"; // TODO final じゃないといけない！！
@@ -70,6 +71,19 @@ public class GameFile extends YamlFile {
 		lobby_loc = getLocation("Lobby.Location");
 		spawn_loc = getLocation("Spawn.Location");
 		respawn_loc = getLocation("Respawn.Location");
+
+		convertTexts();
+	}
+
+	private void convertTexts() {
+		RunnerItems.Feather.Name = Utilities.convertText(RunnerItems.Feather.Name);
+		for (int i = 0; i > RunnerItems.Feather.Lore.size(); i++) {
+			RunnerItems.Feather.Lore.set(i, Utilities.convertText(RunnerItems.Feather.Lore.get(i)));
+		}
+		RunnerItems.Bone.Name = Utilities.convertText(RunnerItems.Bone.Name);
+		for (int i = 0; i > RunnerItems.Bone.Lore.size(); i++) {
+			RunnerItems.Bone.Lore.set(i, Utilities.convertText(RunnerItems.Bone.Lore.get(i)));
+		}
 	}
 
 	public Location getLocation(String path) {

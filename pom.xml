@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.smk7758</groupId>
 	<artifactId>TagGame</artifactId>
-	<version>beta-0.0.4</version>
+	<version>beta-0.0.5</version>
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>

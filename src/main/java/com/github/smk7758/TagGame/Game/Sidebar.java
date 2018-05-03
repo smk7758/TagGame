@@ -12,13 +12,15 @@ import org.bukkit.scoreboard.Scoreboard;
 import com.github.smk7758.TagGame.Main;
 import com.github.smk7758.TagGame.Util.SendLog;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class Sidebar implements Closeable {
 	private Main main = null;
 	private Scoreboard scoreboard = null;
 	private Objective objective = null;
 	private String objective_name = "TagGame";
 	private String dispray_name = "TagGame";
-	private Map<SidebarContents, Integer> lines = new EnumMap<>(SidebarContents.class);;
+	private Map<SidebarContents, Integer> lines = new EnumMap<>(SidebarContents.class);
 
 	// public Sidebar(Main main, int game_length, int runner_count, int hunter_count) {
 	// initialize(main, game_length, runner_count, hunter_count, objective_name, dispray_name);
@@ -61,7 +63,7 @@ public class Sidebar implements Closeable {
 
 		// set new lines.
 		for (SidebarContents content : SidebarContents.values()) {
-			objective.getScore(getText(content) + ": " + lines.get(content)).setScore(content.line);
+			objective.getScore(getText(content) + ChatColor.RESET + ": " + lines.get(content)).setScore(content.line);
 		}
 	}
 
@@ -72,11 +74,11 @@ public class Sidebar implements Closeable {
 	public String getText(SidebarContents contents) {
 		switch (contents) {
 			case Hunter:
-				return main.configfile.Hunter.DisplayName;
+				return main.configfile.Hunter.name;
 			case Runner:
-				return main.configfile.Runner.DisplayName;
+				return main.configfile.Runner.name;
 			default:
-				return main.configfile.Hunter.DisplayName;
+				return main.configfile.Hunter.name;
 		}
 	}
 

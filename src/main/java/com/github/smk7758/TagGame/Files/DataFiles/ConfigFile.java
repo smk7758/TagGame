@@ -4,8 +4,10 @@ import org.bukkit.plugin.Plugin;
 
 import com.github.smk7758.TagGame.Main;
 import com.github.smk7758.TagGame.Files.YamlFile;
+import com.github.smk7758.TagGame.Files.YamlFileExceptField;
 import com.github.smk7758.TagGame.Game.TeamManager.TeamName;
 import com.github.smk7758.TagGame.Util.SendLog;
+import com.github.smk7758.TagGame.Util.Utilities;
 
 public class ConfigFile extends YamlFile {
 	private final String file_name = "config.yml"; // TODO final じゃないといけない！！
@@ -13,10 +15,11 @@ public class ConfigFile extends YamlFile {
 	public Hunter Hunter;
 	public Runner Runner;
 	public CaughtRunner CaughtRunner;
-	public OtherPlayer OtherPlayer;
 
 	public class Player {
 		public String Prefix, DisplayName;
+		@YamlFileExceptField
+		public String name; // input in loadFields()
 	}
 
 	public class Hunter extends Player {
@@ -26,9 +29,6 @@ public class ConfigFile extends YamlFile {
 	}
 
 	public class CaughtRunner extends Player {
-	}
-
-	public class OtherPlayer extends Player {
 	}
 
 	public ConfigFile(Plugin plugin) {
@@ -44,6 +44,13 @@ public class ConfigFile extends YamlFile {
 	public void loadField() {
 		Main.debug_mode = DebugMode;
 		loadPlayers();
+		convertTexts();
+	}
+
+	private void convertTexts() {
+		Hunter.name = Utilities.convertText(Hunter.Prefix + Hunter.DisplayName);
+		Runner.name = Utilities.convertText(Runner.Prefix + Runner.DisplayName);
+		CaughtRunner.name = Utilities.convertText(CaughtRunner.Prefix + CaughtRunner.DisplayName);
 	}
 
 	public void loadPlayers() {

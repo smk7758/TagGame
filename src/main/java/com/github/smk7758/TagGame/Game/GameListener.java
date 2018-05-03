@@ -49,6 +49,8 @@ public class GameListener implements Listener {
 				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.RunnerItems.Feather.Lore)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5 * 20, 0));
 			SendLog.debug("used feather", player);
+			player.getInventory().remove(main.getGameManager().getFeather());
+			SendLog.debug("removed feather", player);
 		} else if (event.getItem().getType().equals(Material.BONE)
 				&& event.getItem().getItemMeta().getDisplayName().equals(main.gamefile.RunnerItems.Bone.Name)
 				&& event.getItem().getItemMeta().getLore().equals(main.gamefile.RunnerItems.Bone.Lore)) {
@@ -59,7 +61,8 @@ public class GameListener implements Listener {
 						.forEach(hunter_player -> hunter_player.showPlayer(player));
 			}, 5 * 20);
 			SendLog.debug("used bone", player);
-			// TODO effect or bukkit invisible
+			player.getInventory().remove(main.getGameManager().getBone());
+			SendLog.debug("removed bone", player);
 		}
 	}
 

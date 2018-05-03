@@ -94,8 +94,7 @@ public class CommandExecuter implements CommandExecutor {
 				YamlFileManager.saveYamlFile(main.gamefile);
 				SendLog.send(main.languagefile.saveCommand, sender);
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				YamlFileManager.reloadYamlFile(main.configfile);
-				YamlFileManager.reloadYamlFile(main.gamefile);
+				main.reloadFiles();
 				SendLog.send(main.languagefile.reloadCommand, sender);
 			} else if (args[0].equalsIgnoreCase("help")) {
 				showCommandList(sender);
@@ -144,5 +143,11 @@ public class CommandExecuter implements CommandExecutor {
 	}
 
 	private void showCommandList(CommandSender sender) {
+		SendLog.send("<Command Arguments List>", sender);
+		main.languagefile.argumentsTop.forEach((arg, text) -> SendLog.send(arg + ": " + text, sender));
+		SendLog.send("<Player Types>", sender);
+		main.languagefile.argumentsPlayerTypes.forEach((arg, text) -> SendLog.send(arg + ": " + text, sender));
+		SendLog.send("<Location Types>", sender);
+		main.languagefile.arugmentsLocations.forEach((arg, text) -> SendLog.send(arg + ": " + text, sender));
 	}
 }

@@ -67,8 +67,7 @@ public class TagGame implements Listener {
 		removeAllPotionEffects(TeamName.Hunter);
 
 		// set exp
-		team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setExp((float) 1.0));// TEST
-		team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setExp((float) 1.0));// TEST // TODO
+		team.getAllTeamPlayers().forEach(player -> player.setLevel(time_count));
 
 		// addHunterItems
 		// TODO
@@ -157,14 +156,14 @@ public class TagGame implements Listener {
 						return;
 					}
 
-					final float exp_amount = (float) ((double) time_count / (double) gamefile.GameLength.getAsSecond());
-					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setExp(exp_amount));
-					team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setExp(exp_amount));
+					// final float exp_amount = (float) ((double) time_count / (double) gamefile.GameLength.getAsSecond());
+					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.setLevel(time_count));
+					team.getTeamPlayers(TeamName.Runner).forEach(player -> player.setLevel(time_count));
 
 					team.getTeamPlayers(TeamName.Hunter).forEach(player -> player.addPotionEffect(potion_effect));
 
 					SendLog.debug("LeftTime: " + time_count);
-					SendLog.debug("Percent: " + exp_amount);
+					// SendLog.debug("Percent: " + exp_amount);
 				}
 			}
 		}.runTaskTimer(main, 0, 1 * 20);
@@ -214,8 +213,9 @@ public class TagGame implements Listener {
 		removeAllPotionEffects(TeamName.Hunter);
 
 		// set exp 0
-		team.getAllTeamPlayers().forEach(player -> player.setExp(0));
+		team.getAllTeamPlayers().forEach(player -> player.setLevel(0));
 
+		// clear Team
 		team.clearTeam();
 		if (loop != null) {
 			loop.cancel();
@@ -283,14 +283,14 @@ public class TagGame implements Listener {
 		});
 	}
 
-	private ItemStack[] getRunnerItems() {
+	public ItemStack[] getRunnerItems() {
 		ItemStack[] items = new ItemStack[2];
 		items[0] = getFeather();
 		items[1] = getBone();
 		return items;
 	}
 
-	private ItemStack getFeather() {
+	public ItemStack getFeather() {
 		ItemStack itemstack = new ItemStack(Material.FEATHER);
 		ItemMeta itemmeta = itemstack.getItemMeta();
 		SendLog.debug("Feather name: " + gamefile.RunnerItems.Feather.Name);
@@ -300,7 +300,7 @@ public class TagGame implements Listener {
 		return itemstack;
 	}
 
-	private ItemStack getBone() {
+	public ItemStack getBone() {
 		ItemStack itemstack = new ItemStack(Material.BONE);
 		ItemMeta itemmeta = itemstack.getItemMeta();
 		SendLog.debug("Bone name: " + gamefile.RunnerItems.Bone.Name);

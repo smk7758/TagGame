@@ -19,16 +19,19 @@ public class Utilities {
 	}
 
 	public static String convertText(String text, String... replaces) {
-		String rep = "";
-		for (String replace : replaces) {
-			if (rep == null || rep.isEmpty()) {
-				rep = replace;
-			} else {
-				text = text.replaceAll(rep, replace);
-				SendLog.debug(text);
-				rep = "";
+		String rep = ""; // 置き換え実行される文字列。
+		if (replaces != null) {
+			for (String replace : replaces) {
+				if (rep == null || rep.isEmpty()) {
+					rep = replace;
+				} else {
+					text = text.replaceAll(rep, replace);
+					SendLog.debug(text);
+					rep = "";
+				}
 			}
 		}
+		text = ChatColor.translateAlternateColorCodes('&', text);
 		return text;
 	}
 

@@ -29,3 +29,22 @@ setTeamError: 'Cannot add %Player% to Team: %Team%'
 removeTeam: ' %Player% has been removed from Team: %Team%'
 removeTeamError: 'Cannot remove %Player% from Team:%Team%'
 setLocation: 'Success to set location: %Location%'
+argumentsTop: 
+  help: ヘルプ
+  add: 追加系。更に引数を必要とする。
+  addrun: 逃走者を追加する。
+  set: 追加系。更に引数を必要とする。
+  start: ゲームを開始する。
+  stop: ゲームを強制停止する。
+  show: 現在のチーム構成(逃走者および鬼)を表示する。
+  save: Configファイルに現在の設定を保存する。
+  reload: Configファイルを再読込する。
+  debug: デバッグモード。
+argumentsPlayerTypes:
+  hunter: 鬼
+  runner: 逃走者
+  caughtrunner: 捕らえられた逃走者
+arugmentsLocations:
+  lobby: ロビー
+  spawn: スポーン
+  respawn: リスポーン
